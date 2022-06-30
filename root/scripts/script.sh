@@ -301,14 +301,22 @@ Process_Roms () {
 					uncompressed_rom="$TMP_DIR/$(unzip -Z1 "$rom" | head -1)"
 					unzip -o -d "$TMP_DIR" "$rom" >/dev/null
 					if [ "$SkipRahasher" = "false" ]; then
-						RaHash=$(/usr/local/RALibretro/bin64/RAHasher $ConsoleId "$uncompressed_rom") || ret=1
+						if [ arch = "aarch64" ]; then
+							RaHash=$(box64 /usr/local/RALibretro/bin64/RAHasher $ConsoleId "$uncompressed_rom") || ret=1
+						else
+                        	RaHash=$(/usr/local/RALibretro/bin64/RAHasher $ConsoleId "$uncompressed_rom") || ret=1
+						fi
 					fi
 					;;
 				*.7z|*.7Z)
 					uncompressed_rom="$TMP_DIR/$(7z l -slt "$rom" | sed -n 's/^Path = //p' | sed '2q;d')"
 					7z e -y -bd -o"$TMP_DIR" "$rom" >/dev/null
 					if [ "$SkipRahasher" = "false" ]; then
-						RaHash=$(/usr/local/RALibretro/bin64/RAHasher $ConsoleId "$uncompressed_rom") || ret=1
+						if [ arch = "aarch64" ]; then
+							RaHash=$(box64 /usr/local/RALibretro/bin64/RAHasher $ConsoleId "$uncompressed_rom") || ret=1
+						else
+                        	RaHash=$(/usr/local/RALibretro/bin64/RAHasher $ConsoleId "$uncompressed_rom") || ret=1
+						fi
 					fi
 					;;
 				*.chd|*.CHD)
@@ -323,12 +331,20 @@ Process_Roms () {
 						log "$ConsoleName :: $RomFilename :: CHD Detected"
 						log "$ConsoleName :: $RomFilename :: Extracting CHD for Hashing"
 						chdman extractcd -i "$rom" -o "$TMP_DIR/game.$ExtractedExtension"
-						RaHash=$(/usr/local/RALibretro/bin64/RAHasher $ConsoleId "$TMP_DIR/game.$ExtractedExtension") || ret=1
+						if [ arch = "aarch64" ]; then
+							RaHash=$(box64 /usr/local/RALibretro/bin64/RAHasher $ConsoleId "$TMP_DIR/game.$ExtractedExtension") || ret=1
+						else
+                        	RaHash=$(/usr/local/RALibretro/bin64/RAHasher $ConsoleId "$TMP_DIR/game.$ExtractedExtension") || ret=1
+						fi
 					fi
 					;;
 				*)
 					if [ "$SkipRahasher" = "false" ]; then
-						RaHash=$(/usr/local/RALibretro/bin64/RAHasher $ConsoleId "$rom") || ret=1
+						if [ arch = "aarch64" ]; then
+							RaHash=$(box64 /usr/local/RALibretro/bin64/RAHasher $ConsoleId "$rom") || ret=1
+						else
+                        	RaHash=$(/usr/local/RALibretro/bin64/RAHasher $ConsoleId "$rom") || ret=1
+						fi
 					fi
 					;;
 			esac
@@ -337,7 +353,11 @@ Process_Roms () {
 				rm -f "$uncompressed_rom"
 		    fi
 		else
-			RaHash=$(/usr/local/RALibretro/bin64/RAHasher $ConsoleId "$rom")
+			if [ arch = "aarch64" ]; then
+				RaHash=$(box64 /usr/local/RALibretro/bin64/RAHasher $ConsoleId "$rom")
+			else
+               	RaHash=$(/usr/local/RALibretro/bin64/RAHasher $ConsoleId "$rom")
+			fi
 		fi
 
 		
